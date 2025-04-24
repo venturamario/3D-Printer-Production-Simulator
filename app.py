@@ -17,6 +17,18 @@ st.header("📊 Inventario")
 for pid, qty in sim.inventory.items():
     st.write(f"Producto {pid}: {qty} unidades")
 
+# Información sobre materiales necesarios para un producto
+st.header("📋 Materiales necesarios para producción")
+product_id = st.selectbox("Selecciona un producto terminado:", [100, 101])  # IDs de productos terminados
+quantity = st.number_input("Cantidad a producir:", min_value=1, value=1)
+
+if st.button("🔍 Mostrar materiales necesarios"):
+    bom = sim.get_bom(product_id, quantity)
+    st.subheader(f"Materiales necesarios para producir {quantity} unidades del producto {product_id}:")
+    for material_id, qty in bom.items():
+        st.write(f"Material {material_id}: {qty} unidades")
+
+
 # Panel de pedidos
 st.header("📝 Pedidos de fabricación")
 for order in sim.orders:
@@ -24,6 +36,7 @@ for order in sim.orders:
     if order.status == "pending":
         if st.button(f"✅ Liberar pedido #{order.id}"):
             order.status = "released"
+
 
 # Avanzar día
 if st.button("⏭️ Avanzar día"):
