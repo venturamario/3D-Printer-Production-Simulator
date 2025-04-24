@@ -30,6 +30,86 @@ inventory_df = pd.DataFrame(inventory_data)
 # Display the inventory as a table
 st.table(inventory_df)
 
+# Panel de Compras
+st.header("🛒 Compras de Materiales")
+
+# Filtrar solo productos tipo "raw" que tienen proveedor
+raw_materials = [p for p in products if p.type == "raw" and any(s.product_id == p.id for s in sim.suppliers)]
+
+if raw_materials:
+    # Selector de material
+    selected_material = st.selectbox(
+        "Seleccionar material a comprar",
+        raw_materials,
+        format_func=lambda x: f"{x.display_name} (ID: {x.id})"
+    )
+
+    if selected_material:
+        supplier = next(s for s in sim.suppliers if s.product_id == selected_material.id)
+        current_stock = sim.inventory.get(selected_material.id, 0)
+
+        col1, col2 = st.columns(2)
+        with col1:
+            st.info(f"💰 Precio unitario: {supplier.unit_cost}€")
+            st.info(f"⏳ Tiempo de entrega: {supplier.lead_time_days} días")
+            st.info(f"📊 Stock actual: {current_stock} unidades")
+
+        with col2:
+            qty_to_order = st.number_input(
+                "Cantidad a ordenar",
+                min_value=1,
+                value=10,
+                help="Introduce la cantidad de unidades que deseas comprar"
+            )
+
+            total_cost = qty_to_order * supplier.unit_cost
+            st.write(f"💲 Coste total: {total_cost}€")
+
+            if st.button("📦 Crear Orden de Compra"):
+                po = sim.create_purchase_order(selected_material.id, qty_to_order)
+                if po:
+                    st.success(
+                        f"Orden de compra #{po.id} creada\n" \
+                        f"Material: {selected_material.display_name}\n" \
+                        f"Cantidad: {qty_to_order} unidades\n" \
+                        f"Coste total: {total_cost}€\n" \
+                        f"Fecha estimada de entrega: {po.estimated_delivery}"
+                    )
+
+# Mostrar órdenes de compra
+if sim.purchase_orders:
+    st.subheader("📆 Órdenes de Compra Activas")
+    
+    # Separar órdenes pendientes y entregadas
+    pending_orders = [po for po in sim.purchase_orders if po.status == "pending"]
+    delivered_orders = [po for po in sim.purchase_orders if po.status == "delivered"]
+
+    if pending_orders:
+        st.write("⏳ Pendientes de entrega:")
+        for po in pending_orders:
+            supplier = next(s for s in sim.suppliers if s.id == po.supplier_id)
+            product_name = product_display_names.get(po.product_id, "Producto desconocido")
+            days_left = (po.estimated_delivery - sim.current_date).days
+            
+            st.info(
+                f"OC #{po.id}: {po.quantity} unidades de {product_name}\n" \
+                f"Proveedor: {supplier.name}\n" \
+                f"Entrega en: {days_left} días ({po.estimated_delivery})"
+            )
+
+    if delivered_orders:
+        st.write("✅ Entregadas recientemente:")
+        # Mostrar solo las últimas 5 órdenes entregadas
+        for po in delivered_orders[-5:]:
+            supplier = next(s for s in sim.suppliers if s.id == po.supplier_id)
+            product_name = product_display_names.get(po.product_id, "Producto desconocido")
+            
+            st.success(
+                f"OC #{po.id}: {po.quantity} unidades de {product_name}\n" \
+                f"Proveedor: {supplier.name}\n" \
+                f"Entregada el: {po.estimated_delivery}"
+            )
+
 # Información sobre materiales necesarios para un producto
 st.header("📋 Materiales necesarios para producción")
 product_id = st.selectbox("Selecciona un producto terminado:", [100, 101])  # IDs de productos terminados
@@ -40,7 +120,6 @@ if st.button("🔍 Mostrar materiales necesarios"):
     st.subheader(f"Materiales necesarios para producir {quantity} unidades del producto {product_id}:")
     for material_id, qty in bom.items():
         st.write(f"Material {material_id}: {qty} unidades")
-
 
 # Panel de pedidos
 st.header("📝 Pedidos de fabricación")
