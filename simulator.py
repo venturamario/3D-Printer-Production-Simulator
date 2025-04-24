@@ -32,13 +32,10 @@ class Simulator:
 
         for order in self.orders:
             if order.status == "released" and completed_today < self.capacity_per_day:
-                if self.can_fulfill_order(order):
-                    self.consume_inventory(order)
-                    order.status = "completed"
-                    completed_today += 1
-                    self.record_event("production", f"Pedido {order.id} completado ({order.quantity} unidades)")
-                else:
-                    self.record_event("stock_shortage", f"No hay suficiente stock para pedido {order.id}")
+                self.consume_inventory(order)
+                order.status = "completed"
+                completed_today += 1
+                self.record_event("production", f"Pedido {order.id} completado ({order.quantity} unidades)")
 
     def can_fulfill_order(self, order):
         required = self.get_bom(order.product_id, order.quantity)
