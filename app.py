@@ -1,5 +1,6 @@
 import streamlit as st
 from simulator import Simulator
+from initial_data import products
 import simpy
 
 # Inicializamos la simulación (solo una vez)
@@ -12,10 +13,14 @@ sim = st.session_state.sim
 st.title("📦 Simulador de Producción de Impresoras 3D")
 st.subheader(f"🗓 Día actual: {sim.current_date}")
 
+# Crear un diccionario para mapear product_id a display_name
+product_display_names = {product.id: product.display_name for product in products}
+
 # Panel de inventario
 st.header("📊 Inventario")
-for pid, qty in sim.inventory.items():
-    st.write(f"Producto {pid}: {qty} unidades")
+for pid, qty in sim.inventory.items():  # Cambiado para desempaquetar solo dos valores
+    display_name = product_display_names.get(pid, "Nombre desconocido")
+    st.write(f"Producto {pid}: {display_name}. {qty} unidades")
 
 # Información sobre materiales necesarios para un producto
 st.header("📋 Materiales necesarios para producción")

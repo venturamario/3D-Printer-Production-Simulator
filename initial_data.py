@@ -3,15 +3,17 @@ from models import Product, InventoryItem, Supplier, BOMItem, ManufacturingOrder
 
 # Productos
 products = [
-    Product(id=1, name="kit_piezas", type="raw"),
-    Product(id=2, name="pcb", type="raw"),
-    Product(id=3, name="extrusor", type="raw"),
-    Product(id=4, name="cables_conexion", type="raw"),
-    Product(id=5, name="transformador_24v", type="raw"),
-    Product(id=6, name="enchufe_schuko", type="raw"),
-    Product(id=7, name="sensor_autonivel", type="raw"),
-    Product(id=100, name="P3D-Classic", type="finished"),
-    Product(id=101, name="P3D-Pro", type="finished"),
+    Product(id=1, name="kit_piezas", type="raw", display_name="Kit de piezas"),
+    Product(id=2, name="pcb", type="raw", display_name="PCB"),
+    Product(id=3, name="extrusor", type="raw", display_name="Extrusor"),
+    Product(id=4, name="cables_conexion", type="raw", display_name="Cables de conexión"),
+    Product(id=5, name="transformador_24v", type="raw", display_name="Transformador 24V"),
+    Product(id=6, name="enchufe_schuko", type="raw", display_name="Enchufe Schuko"),
+    Product(id=7, name="sensor_autonivel", type="raw", display_name="Sensor de autonivelación"),
+    Product(id=8, name="P3D-Classic", type="finished", display_name="Impresora 3D Classic"),
+    Product(id=9, name="P3D-Pro", type="finished", display_name="Impresora 3D Pro"),
+    Product(id=10, name="P3D-Pro-Plus", type="finished", display_name="Impresora 3D Pro Plus"),
+    Product(id=11, name="P3D-Pro-XL", type="finished", display_name="Impresora 3D Pro XL")
 ]
 
 # Inventario inicial
