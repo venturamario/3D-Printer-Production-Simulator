@@ -52,3 +52,7 @@ Interfaz Streamlit Construcción rápida de dashboards.
 Gráficas matplotlib Integración directa en Streamlit.
 
 Control de versiones con Git + GitHub Flujo estándar.
+
+**Para ejecutar la simulación:**  
+```bash
+streamlit run app.py
