@@ -2,6 +2,7 @@ import streamlit as st
 from simulator import Simulator
 from initial_data import products
 import simpy
+import pandas as pd
 
 # Inicializamos la simulación (solo una vez)
 if "sim" not in st.session_state:
@@ -18,9 +19,16 @@ product_display_names = {product.id: product.display_name for product in product
 
 # Panel de inventario
 st.header("📊 Inventario")
-for pid, qty in sim.inventory.items():  # Cambiado para desempaquetar solo dos valores
-    display_name = product_display_names.get(pid, "Nombre desconocido")
-    st.write(f"Producto {pid}: {display_name}. {qty} unidades")
+
+# Convert inventory to a DataFrame for tabular display
+inventory_data = [
+    {"ID Producto": pid, "Nombre": product_display_names.get(pid, "Nombre desconocido"), "Cantidad": qty}
+    for pid, qty in sim.inventory.items()
+]
+inventory_df = pd.DataFrame(inventory_data)
+
+# Display the inventory as a table
+st.table(inventory_df)
 
 # Información sobre materiales necesarios para un producto
 st.header("📋 Materiales necesarios para producción")

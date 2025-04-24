@@ -25,33 +25,40 @@ simulador-impresoras3d/
 
 📦 Componentes Principales
 1. models.py
-Define las entidades clave:
-* Product, InventoryItem, Supplier, BOMItem
-* ManufacturingOrder, PurchaseOrder, Event
+   Define las entidades clave:
+   * Product, InventoryItem, Supplier, BOMItem
+   * ManufacturingOrder, PurchaseOrder, Event
 2. initial_data.py
-Contiene los datos iniciales precargados:
-* Productos, inventario, proveedores.
-* BOMs por modelo de impresora.
-* Pedidos de fabricación iniciales.
+   Contiene los datos iniciales precargados:
+   * Productos, inventario, proveedores.
+   * BOMs por modelo de impresora.
+   * Pedidos de fabricación iniciales.
 3. simulator.py
-Contiene la clase Simulator, que maneja:
-* Avance de días.
-* Liberación y ejecución de pedidos.
-* Órdenes de compra y entregas.
-* Registro de eventos históricos.
+   Contiene la clase Simulator, que maneja:
+   * Avance de días.
+   * Liberación y ejecución de pedidos.
+   * Órdenes de compra y entregas.
+   * Registro de eventos históricos.
 4. app.py
-Contiene la interfaz de usuario en Streamlit:
-* Visualiza inventario y pedidos.
-* Permite liberar pedidos y emitir órdenes de compra.
-* Botón para avanzar el día.
-* Muestra los últimos eventos.
+   Contiene la interfaz de usuario en Streamlit:
+   * Visualiza inventario y pedidos.
+   * Permite liberar pedidos y emitir órdenes de compra.
+   * Botón para avanzar el día.
+   * Muestra los últimos eventos.
+
+⚙️ Cambios recientes
+1. **Inventario en formato tabular**:
+   El inventario ahora se muestra en un formato tabular en la interfaz de Streamlit, utilizando `st.table`. Esto mejora la claridad y organización de los datos.
+
+2. **Actualización inmediata del inventario**:
+   El inventario se actualiza inmediatamente después de procesar un pedido de fabricación, asegurando que los datos reflejados en la interfaz sean consistentes con el estado actual del sistema.
 
 ⚙️ Flujo de Simulación Diario
 1. El usuario libera pedidos manualmente desde la interfaz.
 2. Al pulsar "Avanzar día":
-    * Se procesan los pedidos liberados.
-    * Se registran eventos de producción.
-    * Se procesan entregas de órdenes de compra vencidas.
+   * Se procesan los pedidos liberados.
+   * Se registran eventos de producción.
+   * Se procesan entregas de órdenes de compra vencidas.
 3. El estado se actualiza en la interfaz.
 
 📈 Próximas Mejoras Sugeridas
