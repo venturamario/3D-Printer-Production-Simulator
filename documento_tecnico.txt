@@ -1,0 +1,75 @@
+📄 Documento Técnico - Simulador de Producción de Impresoras 3D
+🧠 Descripción General
+Este simulador representa el funcionamiento diario de una planta de fabricación de impresoras 3D. El usuario asume el rol de planificador de producción y debe tomar decisiones sobre:
+* Liberación de pedidos de fabricación.
+* Emisión de órdenes de compra.
+* Gestión de inventario.
+El sistema simula cada día y registra eventos relevantes como producción, entregas y cambios en el stock.
+
+🧱 Estructura del Proyecto
+simulador-impresoras3d/
+├── app.py                  # Interfaz en Streamlit
+├── simulator.py            # Lógica de simulación con SimPy
+├── models.py               # Modelos de datos con Pydantic
+├── initial_data.py         # Datos iniciales (inventario, BOM, etc.)
+├── requirements.txt        # Dependencias necesarias
+├── README.md               # Instrucciones básicas
+└── data/                   # (opcional) para exportar/importar JSON
+
+🛠️ Tecnología Utilizada
+* Python 3.11+
+* SimPy: Simulación de eventos discretos.
+* Streamlit: Interfaz de usuario interactiva.
+* Pydantic: Validación de datos y modelos base.
+* Git: Control de versiones.
+
+📦 Componentes Principales
+1. models.py
+Define las entidades clave:
+* Product, InventoryItem, Supplier, BOMItem
+* ManufacturingOrder, PurchaseOrder, Event
+2. initial_data.py
+Contiene los datos iniciales precargados:
+* Productos, inventario, proveedores.
+* BOMs por modelo de impresora.
+* Pedidos de fabricación iniciales.
+3. simulator.py
+Contiene la clase Simulator, que maneja:
+* Avance de días.
+* Liberación y ejecución de pedidos.
+* Órdenes de compra y entregas.
+* Registro de eventos históricos.
+4. app.py
+Contiene la interfaz de usuario en Streamlit:
+* Visualiza inventario y pedidos.
+* Permite liberar pedidos y emitir órdenes de compra.
+* Botón para avanzar el día.
+* Muestra los últimos eventos.
+
+⚙️ Flujo de Simulación Diario
+1. El usuario libera pedidos manualmente desde la interfaz.
+2. Al pulsar "Avanzar día":
+    * Se procesan los pedidos liberados.
+    * Se registran eventos de producción.
+    * Se procesan entregas de órdenes de compra vencidas.
+3. El estado se actualiza en la interfaz.
+
+📈 Próximas Mejoras Sugeridas
+* Gráficas de evolución del stock y producción.
+* Exportación e importación de estado en JSON.
+* API REST con FastAPI y documentación Swagger.
+* Lógica de sugerencia de compra automática.
+
+📦 Requisitos de Instalación (requirements.txt)
+streamlit
+simpy
+pydantic
+
+🚀 Cómo Ejecutar
+python -m venv venv
+source venv/bin/activate  # o venv\Scripts\activate en Windows
+pip install -r requirements.txt
+streamlit run app.py
+
+📌 Autoría y Licencia
+Trabajo académico para la asignatura de Sistemas de Información (2025).
