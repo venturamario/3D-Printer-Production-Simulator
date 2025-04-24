@@ -48,6 +48,6 @@ class PurchaseOrder(BaseModel):
 # Evento (histórico del sistema)
 class Event(BaseModel):
     id: int
-    type: Literal["production", "purchase", "stock_change", "order_released"]
+    type: Literal["production", "purchase", "stock_change", "order_released", "day_end", "stock_shortage"]
     date_simulated: date
     detail: str
