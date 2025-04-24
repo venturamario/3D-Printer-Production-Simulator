@@ -35,7 +35,12 @@ for order in sim.orders:
     st.write(f"Pedido #{order.id} | Producto: {order.product_id} | Cantidad: {order.quantity} | Estado: {order.status}")
     if order.status == "pending":
         if st.button(f"✅ Liberar pedido #{order.id}"):
-            order.status = "released"
+            if sim.can_fulfill_order(order):
+                sim.consume_inventory(order)
+                order.status = "released"
+                st.success(f"Pedido #{order.id} liberado y materiales reservados")
+            else:
+                st.error(f"No hay suficiente stock para liberar el pedido #{order.id}")
 
 
 # Avanzar día
