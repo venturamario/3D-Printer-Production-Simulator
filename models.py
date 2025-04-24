@@ -7,6 +7,7 @@ class Product(BaseModel):
     id: int
     name: str
     type: Literal["raw", "finished"]
+    display_name: str  # nombre para mostrar en la interfaz
 
 # Inventario
 class InventoryItem(BaseModel):
