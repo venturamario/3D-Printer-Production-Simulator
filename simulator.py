@@ -21,7 +21,7 @@ class Simulator:
         self.process_orders()
         self.record_event("day_end", f"Fin del día {self.current_date}")
         self.current_date += timedelta(days=1)
-        yield self.env.timeout(1)
+        self.env.timeout(1)
 
     def process_orders(self):
         completed_today = 0
