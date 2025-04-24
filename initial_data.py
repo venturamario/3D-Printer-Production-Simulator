@@ -25,6 +25,10 @@ inventory = [
     InventoryItem(product_id=5, quantity=20),
     InventoryItem(product_id=6, quantity=25),
     InventoryItem(product_id=7, quantity=10),
+    InventoryItem(product_id=8, quantity=3),  # P3D-Classic
+    InventoryItem(product_id=9, quantity=6),  # P3D-Pro
+    InventoryItem(product_id=10, quantity=45),  # P3D-Pro-Plus
+    InventoryItem(product_id=11, quantity=8),  # P3D-Pro-XL
 ]
 
 # Proveedores
