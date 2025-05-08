@@ -33,9 +33,17 @@ inventory = [
 
 # Proveedores
 suppliers = [
-    Supplier(id=1, name="Proveedor A", product_id=1, unit_cost=90.0, lead_time_days=3),
-    Supplier(id=2, name="Proveedor B", product_id=2, unit_cost=50.0, lead_time_days=2),
-    # Añade más si hace falta
+    Supplier(id=1, name="Proveedor A", product_id=1, unit_cost=90.0, lead_time_days=3),  # kit_piezas
+    Supplier(id=2, name="Proveedor B", product_id=2, unit_cost=50.0, lead_time_days=2),  # pcb
+    Supplier(id=3, name="Proveedor C", product_id=3, unit_cost=120.0, lead_time_days=4),  # extrusor
+    Supplier(id=4, name="Proveedor D", product_id=4, unit_cost=15.0, lead_time_days=1),  # cables_conexion
+    Supplier(id=5, name="Proveedor E", product_id=5, unit_cost=60.0, lead_time_days=3),  # transformador_24v
+    Supplier(id=6, name="Proveedor F", product_id=6, unit_cost=10.0, lead_time_days=2),  # enchufe_schuko
+    Supplier(id=7, name="Proveedor G", product_id=7, unit_cost=25.0, lead_time_days=3),  # sensor_autonivel
+    Supplier(id=8, name="Proveedor H", product_id=8, unit_cost=300.0, lead_time_days=5),  # P3D-Classic
+    Supplier(id=9, name="Proveedor I", product_id=9, unit_cost=500.0, lead_time_days=6),  # P3D-Pro
+    Supplier(id=10, name="Proveedor J", product_id=10, unit_cost=700.0, lead_time_days=7),  # P3D-Pro-Plus
+    Supplier(id=11, name="Proveedor K", product_id=11, unit_cost=1000.0, lead_time_days=8),  # P3D-Pro-XL
 ]
 
 # BOM: descomposición de cada impresora
