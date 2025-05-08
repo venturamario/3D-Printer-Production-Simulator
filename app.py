@@ -24,7 +24,7 @@ st.header("📊 Inventario")
 inventory_data = [
     {
         "ID Material": pid,
-        "Nombre": product_display_names.get(pid, "Nombre desconocido"),
+        "Nombre": product_display_names.get(pid, "Nombre desconocido"), 
         "Stock Total": qty,
         "Reservado": sim.reserved_materials.get(pid, 0),
         "Stock Resultante": qty - sim.reserved_materials.get(pid, 0)

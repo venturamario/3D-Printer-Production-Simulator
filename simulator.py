@@ -50,7 +50,7 @@ class Simulator:
             self.future_subtractions[pid] = self.future_subtractions.get(pid, 0) + qty
 
     def consume_inventory(self, order):
-        required = self.get_bom(order.product_id, order.quantity)
+        required = self.get_bom(order.product_id, order.quantity) 
         for pid, qty in required.items():
             # Primero actualizamos el inventario
             self.inventory[pid] -= qty

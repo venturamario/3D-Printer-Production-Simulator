@@ -21,7 +21,7 @@ st.header("📊 Inventario y Compras")
 
 # Mostrar inventario actual
 for pid, qty in sim.inventory.items():
-    display_name = product_display_names.get(pid, "Nombre desconocido")
+    display_name = product_display_names.get(pid, "Nombre desconocido") 
     cols = st.columns([2, 1, 1, 1, 1, 1])
     
     with cols[0]:
