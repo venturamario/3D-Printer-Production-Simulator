@@ -45,7 +45,7 @@ class Simulator:
 
     def reserve_materials(self, order):
         required = self.get_bom(order.product_id, order.quantity)
-        for pid, qty in required.items():
+        for pid, qty in required.items(): 
             self.reserved_materials[pid] = self.reserved_materials.get(pid, 0) + qty
             self.future_subtractions[pid] = self.future_subtractions.get(pid, 0) + qty
 

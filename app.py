@@ -68,7 +68,7 @@ if all_materials:
             qty_to_order = st.number_input(
                 "Cantidad a ordenar",
                 min_value=1,
-                value=10,
+                value=1,
                 help="Introduce la cantidad de unidades que deseas comprar"
             )
 
@@ -137,10 +137,16 @@ if st.button("🔍 Mostrar materiales necesarios"):
 # Panel de pedidos
 st.header("📝 Pedidos de fabricación")
 for order in sim.orders:
-    st.write(f"Pedido #{order.id} | Producto: {order.product_id} | Cantidad: {order.quantity} | Estado: {order.status}")
+    # Check if the order can be fulfilled
+    can_fulfill = sim.can_fulfill_order(order)
+    advice = "✅ Suficiente stock" if can_fulfill else "⚠️ Stock insuficiente"
+
+    # Display the order details with advice
+    st.write(f"Pedido #{order.id} | Producto: {order.product_id} | Cantidad: {order.quantity} | Estado: {order.status} | {advice}")
+
     if order.status == "pending":
         if st.button(f"🔒 Reservar materiales #{order.id}"):
-            if sim.can_fulfill_order(order):
+            if can_fulfill:
                 sim.reserve_materials(order)
                 order.status = "reserved"
                 st.success(f"Pedido #{order.id}: Materiales reservados")
