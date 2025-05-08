@@ -164,6 +164,23 @@ if st.button("⏭️ Avanzar día"):
     sim.advance_day()
 
 # Eventos del día
-st.header("📚 Eventos")
+st.header("📚 Eventos Recientes")
+
+# Diccionario para asignar colores y emojis a los tipos de eventos
+event_styles = {
+    "day_end": ("🔵", "blue"),
+    "production": ("✅", "green"),
+    "stock_change": ("📦", "orange"),
+    "purchase": ("🛒", "cyan"),
+    "purchase_error": ("❌", "red"),
+}
+
+# Mostrar los últimos 10 eventos
 for event in reversed(sim.events[-10:]):
-    st.text(f"[{event.date_simulated}] {event.type.upper()}: {event.detail}")
+    emoji, color = event_styles.get(event.type, ("❓", "gray"))
+    st.markdown(
+        f"<p style='color:{color}; font-size:16px;'>"
+        f"{emoji} <b>{event.type.upper()}</b>: {event.detail} "
+        f"<i>({event.date_simulated})</i></p>",
+        unsafe_allow_html=True
+    )
