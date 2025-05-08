@@ -2,7 +2,7 @@ import simpy
 from datetime import date, timedelta
 from typing import List
 from models import InventoryItem, ManufacturingOrder, BOMItem, Event, PurchaseOrder
-from initial_data import inventory, manufacturing_orders, bom, suppliers
+from initial_data import inventory, manufacturing_orders, bom, suppliers, budget, prices
 
 class Simulator:
     def __init__(self, env, capacity_per_day=10):
@@ -22,6 +22,8 @@ class Simulator:
         self.order_id_counter = len(self.orders) + 1
         self.purchase_order_counter = 1
         self.event_id_counter = 1
+        self.budget = budget
+        self.prices = prices
 
     def advance_day(self):
         self.process_purchase_orders()
@@ -38,6 +40,7 @@ class Simulator:
                 order.status = "completed"
                 completed_today += 1
                 self.record_event("production", f"Pedido {order.id} completado ({order.quantity} unidades)")
+                self.budget += self.prices[order.product_id] * order.quantity
 
     def can_fulfill_order(self, order):
         required = self.get_bom(order.product_id, order.quantity)
@@ -51,6 +54,7 @@ class Simulator:
 
     def consume_inventory(self, order):
         required = self.get_bom(order.product_id, order.quantity) 
+        self.budget += self.prices[order.product_id] * order.quantity
         for pid, qty in required.items():
             # Primero actualizamos el inventario
             self.inventory[pid] -= qty
@@ -59,6 +63,7 @@ class Simulator:
                 del self.reserved_materials[pid]
             if pid in self.future_subtractions:
                 del self.future_subtractions[pid]
+            
             self.record_event("stock_change", f"-{qty} de material {pid} (pedido completado)")
 
     def get_bom(self, product_id, quantity):
@@ -71,7 +76,9 @@ class Simulator:
         if not supplier:
             self.record_event("purchase_error", f"No se encontró proveedor para el producto {product_id}")
             return None
-
+        if self.budget < supplier.unit_cost * quantity:
+            self.record_event("purchase", f"Presupuesto insuficiente para comprar {quantity} unidades de {product_id}")
+            return None
         # Create purchase order
         po = PurchaseOrder(
             id=self.purchase_order_counter,
@@ -82,6 +89,8 @@ class Simulator:
             estimated_delivery=self.current_date + timedelta(days=supplier.lead_time_days),
             status="pending"
         )
+
+        
         
         self.purchase_orders.append(po)
         self.purchase_order_counter += 1
@@ -90,6 +99,8 @@ class Simulator:
         self.record_event("purchase", 
             f"Orden de compra #{po.id} creada: {quantity} unidades de {product_id} " \
             f"a {supplier.name} por {cost}€. Entrega estimada: {po.estimated_delivery}")
+        
+        self.budget -= supplier.unit_cost * quantity
         
         return po
 

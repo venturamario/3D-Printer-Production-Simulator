@@ -14,6 +14,8 @@ sim = st.session_state.sim
 st.title("📦 Simulador de Producción de Impresoras 3D")
 st.subheader(f"🗓 Día actual: {sim.current_date}")
 
+st.header("Dinero en caja")
+st.write(f"💰 Dinero disponible: {sim.budget}€")
 # Crear un diccionario para mapear product_id a display_name
 product_display_names = {product.id: product.display_name for product in products}
 
@@ -86,6 +88,7 @@ if all_materials:
                             f"Coste total: {total_cost}€\n" \
                             f"Fecha estimada de entrega: {po.estimated_delivery}"
                         )
+                    st.rerun()
             else:
                 st.error("No se puede crear una orden de compra sin un proveedor.")
 
@@ -157,11 +160,13 @@ for order in sim.orders:
             sim.consume_inventory(order)
             order.status = "completed"
             st.success(f"Pedido #{order.id} completado y materiales consumidos")
+            st.rerun()
 
 
 # Avanzar día
 if st.button("⏭️ Avanzar día"):
     sim.advance_day()
+    st.rerun()
 
 # Eventos del día
 st.header("📚 Eventos Recientes")
