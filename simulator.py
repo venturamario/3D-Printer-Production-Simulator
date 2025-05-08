@@ -32,7 +32,6 @@ class Simulator:
 
         for order in self.orders:
             if order.status == "released" and completed_today < self.capacity_per_day:
-                self.consume_inventory(order)
                 order.status = "completed"
                 completed_today += 1
                 self.record_event("production", f"Pedido {order.id} completado ({order.quantity} unidades)")
