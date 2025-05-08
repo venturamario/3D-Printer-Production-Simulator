@@ -45,7 +45,7 @@ class Simulator:
         required = self.get_bom(order.product_id, order.quantity)
         for pid, qty in required.items():
             self.inventory[pid] -= qty
-            self.record_event("stock_change", f"-{qty} de producto {pid}")
+            self.record_event("stock_change", f"-{qty} de material {pid}")
 
     def get_bom(self, product_id, quantity):
         items = [b for b in self.bom if b.product_id == product_id]

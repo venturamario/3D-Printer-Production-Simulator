@@ -22,7 +22,7 @@ st.header("📊 Inventario")
 
 # Convert inventory to a DataFrame for tabular display
 inventory_data = [
-    {"ID Producto": pid, "Nombre": product_display_names.get(pid, "Nombre desconocido"), "Cantidad": qty}
+    {"ID Material": pid, "Nombre": product_display_names.get(pid, "Nombre desconocido"), "Cantidad": qty}
     for pid, qty in sim.inventory.items()
 ]
 inventory_df = pd.DataFrame(inventory_data)
