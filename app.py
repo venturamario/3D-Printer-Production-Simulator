@@ -62,7 +62,7 @@ if all_materials:
             qty_to_order = st.number_input(
                 "Cantidad a ordenar",
                 min_value=1,
-                value=10,
+                value=1,
                 help="Introduce la cantidad de unidades que deseas comprar"
             )
 
