@@ -22,7 +22,13 @@ st.header("📊 Inventario")
 
 # Convert inventory to a DataFrame for tabular display
 inventory_data = [
-    {"ID Material": pid, "Nombre": product_display_names.get(pid, "Nombre desconocido"), "Cantidad": qty}
+    {
+        "ID Material": pid,
+        "Nombre": product_display_names.get(pid, "Nombre desconocido"),
+        "Stock Total": qty,
+        "Reservado": sim.reserved_materials.get(pid, 0),
+        "Stock Resultante": qty - sim.reserved_materials.get(pid, 0)
+    }
     for pid, qty in sim.inventory.items()
 ]
 inventory_df = pd.DataFrame(inventory_data)
@@ -133,13 +139,18 @@ st.header("📝 Pedidos de fabricación")
 for order in sim.orders:
     st.write(f"Pedido #{order.id} | Producto: {order.product_id} | Cantidad: {order.quantity} | Estado: {order.status}")
     if order.status == "pending":
-        if st.button(f"✅ Liberar pedido #{order.id}"):
+        if st.button(f"🔒 Reservar materiales #{order.id}"):
             if sim.can_fulfill_order(order):
-                sim.consume_inventory(order)
-                order.status = "released"
-                st.success(f"Pedido #{order.id} liberado y materiales reservados")
+                sim.reserve_materials(order)
+                order.status = "reserved"
+                st.success(f"Pedido #{order.id}: Materiales reservados")
             else:
-                st.error(f"No hay suficiente stock para liberar el pedido #{order.id}")
+                st.error(f"No hay suficiente stock para el pedido #{order.id}")
+    elif order.status == "reserved":
+        if st.button(f"✅ Liberar pedido #{order.id}"):
+            sim.consume_inventory(order)
+            order.status = "completed"
+            st.success(f"Pedido #{order.id} completado y materiales consumidos")
 
 
 # Avanzar día

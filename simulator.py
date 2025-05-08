@@ -10,6 +10,10 @@ class Simulator:
         self.capacity_per_day = capacity_per_day
         self.current_date = date(2025, 4, 24)
         self.inventory = {item.product_id: item.quantity for item in inventory}
+        self.reserved_materials = {item.product_id: 0 for item in inventory}
+        self.future_subtractions = {item.product_id: 0 for item in inventory}
+        self.reserved_materials = {item.product_id: 0 for item in inventory}
+        self.future_subtractions = {item.product_id: 0 for item in inventory}
         self.orders = manufacturing_orders
         self.bom = bom
         self.suppliers = suppliers
@@ -20,8 +24,6 @@ class Simulator:
         self.event_id_counter = 1
 
     def advance_day(self):
-        print(f"\n=== Día {self.current_date} ===")
-        self.process_orders()
         self.process_purchase_orders()
         self.record_event("day_end", f"Fin del día {self.current_date}")
         self.current_date += timedelta(days=1)
@@ -32,19 +34,32 @@ class Simulator:
 
         for order in self.orders:
             if order.status == "released" and completed_today < self.capacity_per_day:
+                self.consume_inventory(order)
                 order.status = "completed"
                 completed_today += 1
                 self.record_event("production", f"Pedido {order.id} completado ({order.quantity} unidades)")
 
     def can_fulfill_order(self, order):
         required = self.get_bom(order.product_id, order.quantity)
-        return all(self.inventory.get(pid, 0) >= qty for pid, qty in required.items())
+        return all(self.inventory.get(pid, 0) - self.reserved_materials.get(pid, 0) >= qty for pid, qty in required.items())
+
+    def reserve_materials(self, order):
+        required = self.get_bom(order.product_id, order.quantity)
+        for pid, qty in required.items():
+            self.reserved_materials[pid] = self.reserved_materials.get(pid, 0) + qty
+            self.future_subtractions[pid] = self.future_subtractions.get(pid, 0) + qty
 
     def consume_inventory(self, order):
         required = self.get_bom(order.product_id, order.quantity)
         for pid, qty in required.items():
+            # Primero actualizamos el inventario
             self.inventory[pid] -= qty
-            self.record_event("stock_change", f"-{qty} de material {pid}")
+            # Ponemos a 0 las reservas
+            if pid in self.reserved_materials:
+                del self.reserved_materials[pid]
+            if pid in self.future_subtractions:
+                del self.future_subtractions[pid]
+            self.record_event("stock_change", f"-{qty} de material {pid} (pedido completado)")
 
     def get_bom(self, product_id, quantity):
         items = [b for b in self.bom if b.product_id == product_id]

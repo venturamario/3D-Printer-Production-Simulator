@@ -22,23 +22,33 @@ st.header("📊 Inventario y Compras")
 # Mostrar inventario actual
 for pid, qty in sim.inventory.items():
     display_name = product_display_names.get(pid, "Nombre desconocido")
-    col1, col2, col3 = st.columns([2, 1, 1])
+    cols = st.columns([2, 1, 1, 1, 1, 1])
     
-    with col1:
-        st.write(f"Producto {pid}: {display_name}. {qty} unidades")
+    with cols[0]:
+        st.write(f"Producto {pid}: {display_name}")
     
     # Solo mostrar botón de compra si es materia prima y tiene proveedor
     product = next((p for p in products if p.id == pid), None)
     supplier = next((s for s in sim.suppliers if s.product_id == pid), None)
     
-    if product and product.type == "raw" and supplier:
-        with col2:
+    with cols[1]:
+        st.write(f"Stock: {qty} unidades")
+        if product and product.type == "raw" and supplier:
             qty_to_order = st.number_input(f"Cantidad {pid}", min_value=1, value=10, key=f"qty_{pid}")
-        with col3:
+    
+    with cols[2]:
+        st.write(f"Reservado: {sim.reserved_materials.get(pid, 0)} unidades")
+        if product and product.type == "raw" and supplier:
             if st.button(f"🛒 Comprar", key=f"buy_{pid}"):
                 po = sim.create_purchase_order(pid, qty_to_order)
                 if po:
                     st.success(f"Orden de compra #{po.id} creada. Llegará en {supplier.lead_time_days} días")
+    
+    with cols[3]:
+        st.write(f"Pendiente: {sim.future_subtractions.get(pid, 0)} unidades")
+    
+    with cols[4]:
+        st.write(f"Disponible: {qty - sim.reserved_materials.get(pid, 0)} unidades")
 
 # Mostrar órdenes de compra pendientes
 if sim.purchase_orders:
@@ -69,6 +79,7 @@ for order in sim.orders:
     if order.status == "pending":
         if st.button(f"✅ Liberar pedido #{order.id}"):
             if sim.can_fulfill_order(order):
+                sim.reserve_materials(order)
                 order.status = "released"
                 sim.consume_inventory(order)
                 st.success(f"Pedido #{order.id} liberado y materiales reservados")
