@@ -139,7 +139,11 @@ st.header("📝 Pedidos de fabricación")
 for order in sim.orders:
     # Check if the order can be fulfilled
     can_fulfill = sim.can_fulfill_order(order)
-    advice = "✅ Suficiente stock" if can_fulfill else "⚠️ Stock insuficiente"
+    advice = ""
+    if order.status == "pending":
+        advice = "✅ Suficiente stock" if can_fulfill else "⚠️ Stock insuficiente"
+    elif order.status == "reserved":
+        advice = "🔒 Materiales reservados"
 
     # Display the order details with advice
     st.write(f"Pedido #{order.id} | Producto: {order.product_id} | Cantidad: {order.quantity} | Estado: {order.status} | {advice}")
