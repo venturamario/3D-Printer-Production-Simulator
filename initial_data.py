@@ -1,6 +1,7 @@
 from datetime import date
 from models import Product, InventoryItem, Supplier, BOMItem, ManufacturingOrder
 
+budget = 10000  # Presupuesto inicial
 # Productos
 products = [
     Product(id=1, name="kit_piezas", type="raw", display_name="Kit de piezas"),
@@ -65,6 +66,11 @@ bom = [
     BOMItem(product_id=101, material_id=6, quantity=1),
     BOMItem(product_id=101, material_id=7, quantity=1),
 ]
+
+prices = {
+    100: 700.0,  # P3D-Classic
+    101: 1000.0,  # P3D-Pro
+}
 
 # Pedidos de fabricación simulados
 manufacturing_orders = [
