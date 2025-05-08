@@ -33,25 +33,29 @@ st.table(inventory_df)
 # Panel de Compras
 st.header("🛒 Compras de Materiales")
 
-# Filtrar solo productos tipo "raw" que tienen proveedor
-raw_materials = [p for p in products if p.type == "raw" and any(s.product_id == p.id for s in sim.suppliers)]
+# Incluir todos los productos (materias primas y productos terminados)
+all_materials = products
 
-if raw_materials:
+if all_materials:
     # Selector de material
     selected_material = st.selectbox(
         "Seleccionar material a comprar",
-        raw_materials,
+        all_materials,
         format_func=lambda x: f"{x.display_name} (ID: {x.id})"
     )
 
     if selected_material:
-        supplier = next(s for s in sim.suppliers if s.product_id == selected_material.id)
+        # Buscar un proveedor para el material seleccionado
+        supplier = next((s for s in sim.suppliers if s.product_id == selected_material.id), None)
         current_stock = sim.inventory.get(selected_material.id, 0)
 
         col1, col2 = st.columns(2)
         with col1:
-            st.info(f"💰 Precio unitario: {supplier.unit_cost}€")
-            st.info(f"⏳ Tiempo de entrega: {supplier.lead_time_days} días")
+            if supplier:
+                st.info(f"💰 Precio unitario: {supplier.unit_cost}€")
+                st.info(f"⏳ Tiempo de entrega: {supplier.lead_time_days} días")
+            else:
+                st.warning("⚠️ No hay proveedor disponible para este material.")
             st.info(f"📊 Stock actual: {current_stock} unidades")
 
         with col2:
@@ -62,19 +66,22 @@ if raw_materials:
                 help="Introduce la cantidad de unidades que deseas comprar"
             )
 
-            total_cost = qty_to_order * supplier.unit_cost
-            st.write(f"💲 Coste total: {total_cost}€")
+            if supplier:
+                total_cost = qty_to_order * supplier.unit_cost
+                st.write(f"💲 Coste total: {total_cost}€")
 
-            if st.button("📦 Crear Orden de Compra"):
-                po = sim.create_purchase_order(selected_material.id, qty_to_order)
-                if po:
-                    st.success(
-                        f"Orden de compra #{po.id} creada\n" \
-                        f"Material: {selected_material.display_name}\n" \
-                        f"Cantidad: {qty_to_order} unidades\n" \
-                        f"Coste total: {total_cost}€\n" \
-                        f"Fecha estimada de entrega: {po.estimated_delivery}"
-                    )
+                if st.button("📦 Crear Orden de Compra"):
+                    po = sim.create_purchase_order(selected_material.id, qty_to_order)
+                    if po:
+                        st.success(
+                            f"Orden de compra #{po.id} creada\n" \
+                            f"Material: {selected_material.display_name}\n" \
+                            f"Cantidad: {qty_to_order} unidades\n" \
+                            f"Coste total: {total_cost}€\n" \
+                            f"Fecha estimada de entrega: {po.estimated_delivery}"
+                        )
+            else:
+                st.error("No se puede crear una orden de compra sin un proveedor.")
 
 # Mostrar órdenes de compra
 if sim.purchase_orders:
