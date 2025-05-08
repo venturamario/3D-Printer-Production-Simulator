@@ -131,10 +131,16 @@ if st.button("🔍 Mostrar materiales necesarios"):
 # Panel de pedidos
 st.header("📝 Pedidos de fabricación")
 for order in sim.orders:
-    st.write(f"Pedido #{order.id} | Producto: {order.product_id} | Cantidad: {order.quantity} | Estado: {order.status}")
+    # Check if the order can be fulfilled
+    can_fulfill = sim.can_fulfill_order(order)
+    advice = "✅ Suficiente stock" if can_fulfill else "⚠️ Stock insuficiente"
+
+    # Display the order details with advice
+    st.write(f"Pedido #{order.id} | Producto: {order.product_id} | Cantidad: {order.quantity} | Estado: {order.status} | {advice}")
+
     if order.status == "pending":
         if st.button(f"✅ Liberar pedido #{order.id}"):
-            if sim.can_fulfill_order(order):
+            if can_fulfill:
                 sim.consume_inventory(order)
                 order.status = "released"
                 st.success(f"Pedido #{order.id} liberado y materiales reservados")
